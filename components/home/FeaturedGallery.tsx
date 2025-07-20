@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Play, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PhotoLightbox } from "@/components/gallery/PhotoLightbox"
-import { usePhotos } from "@/hooks/usePhotos"
+import { useFeaturedPhotos, useHomeFeaturedPhotos } from "@/hooks/usePhotos"
 import { useHomeVideos } from "@/hooks/useVideos"
 
 interface FeaturedGalleryProps {
@@ -18,17 +18,14 @@ interface FeaturedGalleryProps {
 
 export function FeaturedGallery({ section, title, description }: FeaturedGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState(-1)
-  const { data: allPhotos } = usePhotos()
+
+  // Get photos based on section
+  const { data: featuredPhotos } = useFeaturedPhotos()
+  const { data: homeFeaturedPhotos } = useHomeFeaturedPhotos(section === "bottom" ? "bottom" : undefined)
   const { data: sectionVideos } = useHomeVideos(section)
 
-  // Get photos for this section from database
-  const sectionPhotos =
-    allPhotos?.filter(
-      (photo) =>
-        photo.is_active &&
-        ((section === "top" && photo.is_featured) ||
-          (section === "bottom" && photo.is_home_featured && photo.home_display_section === "bottom")),
-    ) || []
+  // Select the appropriate photos based on section
+  const sectionPhotos = section === "top" ? featuredPhotos || [] : homeFeaturedPhotos || []
 
   // Combine photos and videos
   const content = [

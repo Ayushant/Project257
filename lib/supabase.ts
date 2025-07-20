@@ -27,6 +27,8 @@ export type Photo = {
   alt_text: string | null
   display_order: number
   is_featured: boolean
+  is_home_featured: boolean
+  home_display_section: string | null
   file_size: number | null
   dimensions: { width: number; height: number } | null
   metadata: any

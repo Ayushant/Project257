@@ -102,20 +102,21 @@ export function PhotoUpload() {
         data: { publicUrl },
       } = supabase.storage.from("photos").getPublicUrl(fileName)
 
-      // Create photo record
+      // Create photo record with all required fields
       await createPhoto.mutateAsync({
         category_id: metadata.categoryId,
         title: metadata.title || file.name,
         description: metadata.description,
         image_url: publicUrl,
+        thumbnail_url: null,
         alt_text: metadata.altText || metadata.title || file.name,
+        display_order: 0,
         is_featured: metadata.isFeatured,
         is_home_featured: metadata.isHomeFeatured,
         home_display_section: metadata.isHomeFeatured ? metadata.homeDisplaySection : null,
         file_size: file.size,
         dimensions: null,
         metadata: {},
-        display_order: 0,
         is_active: true,
       })
 

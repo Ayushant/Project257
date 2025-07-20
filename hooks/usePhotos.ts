@@ -54,6 +54,35 @@ export function useFeaturedPhotos() {
   })
 }
 
+export function useHomeFeaturedPhotos(section?: string) {
+  return useQuery({
+    queryKey: ["photos", "home-featured", section],
+    queryFn: async () => {
+      let query = supabase
+        .from("photos")
+        .select(`
+          *,
+          categories!inner(name)
+        `)
+        .eq("is_home_featured", true)
+        .eq("is_active", true)
+
+      if (section) {
+        query = query.eq("home_display_section", section)
+      }
+
+      const { data, error } = await query.order("display_order").order("created_at", { ascending: false })
+
+      if (error) throw error
+
+      return data.map((photo) => ({
+        ...photo,
+        category_name: photo.categories?.name,
+      })) as Photo[]
+    },
+  })
+}
+
 export function usePhotoMutations() {
   const queryClient = useQueryClient()
 
